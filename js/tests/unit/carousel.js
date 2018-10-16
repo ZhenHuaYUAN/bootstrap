@@ -4,17 +4,15 @@ $(function () {
   window.Carousel = typeof bootstrap !== 'undefined' ? bootstrap.Carousel : Carousel
 
   var originWinPointerEvent = window.PointerEvent
-  var originMsPointerEvent = window.MSPointerEvent
+  window.MSPointerEvent = null
   var supportPointerEvent = Boolean(window.PointerEvent || window.MSPointerEvent)
 
   function clearPointerEvents() {
     window.PointerEvent = null
-    window.MSPointerEvent = null
   }
 
   function restorePointerEvents() {
     window.PointerEvent = originWinPointerEvent
-    window.MSPointerEvent = originMsPointerEvent
   }
 
   var stylesCarousel = [
@@ -1036,7 +1034,6 @@ $(function () {
     assert.expect(3)
     var $styles = $(stylesCarousel).appendTo('head')
     var done = assert.async()
-    document.documentElement.ontouchstart = $.noop
 
     var carouselHTML =
         '<div class="carousel" data-interval="false">' +
@@ -1050,8 +1047,7 @@ $(function () {
         '  </div>' +
         '</div>'
 
-    var $carousel = $(carouselHTML)
-    $carousel.appendTo('#qunit-fixture')
+    var $carousel = $(carouselHTML).appendTo('#qunit-fixture')
     var $item = $('#item')
     $carousel.bootstrapCarousel()
     var carousel = $carousel.data('bs.carousel')
@@ -1061,7 +1057,6 @@ $(function () {
       assert.ok(true, 'slid event fired')
       assert.ok($item.hasClass('active'))
       assert.ok(spy.called)
-      delete document.documentElement.ontouchstart
       $styles.remove()
       done()
     })
